@@ -52,6 +52,29 @@ class ProductManager {
         }
         this.product.push(product)
     }
+
+    createProduct = async (title, description, price, thumbnail, stock) => {
+        return this.getProduct()
+            .then(productos => {
+                productos.push({ title, description, price, thumbnail, stock })
+                return productos
+            })
+            .then(productosNew => fs.promises.writeFile(this.filename, JSON.stringify(productosNew)))
+    }
+
+
+
+    getProduct = async () => {
+        return fs.promises.readFile(this.product, this.format)
+            .then(content => JSON.parse(content))
+            .catch(e => {
+                console.log('error', e);
+            })
+    }
+
+
+
+
 }
 
 const newProd = new ProductManager()
@@ -79,31 +102,11 @@ const contentSrt = fs.readFileSync('objeto.json', 'utf-8')
 const objNew = JSON.parse(contentSrt)
 
 
-createProduct = async (title, description, price, thumbnail, stock) => {
-    return this.getProduct()
-        .then(productos => {
-            productos.push({ title, description, price, thumbnail, stock })
-            return productos
-        })
-        .then(productosNew => fs.promises.writeFile(this.filename, JSON.stringify(productosNew)))
-}
-
-
-
-getProduct = async () => {
-    return fs.promises.readFile(this.product, this.format)
-        .then(content => JSON.parse(content))
-        .catch(e => {
-            console.log('error', e);
-        })
-}
-
-
 async function run() {
     const productArch = new ProductManager('objeto.json')
     await productArch.createProduct('licuadora', 'gira rapido', '$3000', 'foto', '25')
     console.log(await productArch.getProduct());
 }
 
-run();
+run()
 
